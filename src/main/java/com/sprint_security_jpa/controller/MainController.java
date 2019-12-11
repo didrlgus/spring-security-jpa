@@ -22,10 +22,12 @@ public class MainController {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/")
-    public ResponseEntity<?> init() {
+    public ResponseEntity<?> init(HttpServletRequest request) throws RuntimeException {
         // 유지, 관리자 계정 생성 (hard-code)
         memberRepository.save(Member.builder().email("user@naver.com").password(passwordEncoder.encode("1234")).roles("ROLE_USER").build());
         memberRepository.save(Member.builder().email("admin@naver.com").password(passwordEncoder.encode("1234")).roles("ROLE_USER,ROLE_ADMIN").build());
+
+        log.info("init() : #### {}", request.getSession().getAttribute("SPRING_SECURITY_CONTEXT"));
 
         return ResponseEntity.ok("Welcome!");
     }
@@ -45,13 +47,13 @@ public class MainController {
 
     @GetMapping("/admin")
     public ResponseEntity<?> adminAuthenticate(SecurityContextHolder contextHolder, Authentication authentication, HttpServletRequest request) {
-        log.info("#### {}", Thread.currentThread().getId());
+        /*log.info("#### {}", Thread.currentThread().getId());
         log.info("#### {}", authentication.hashCode());
         log.info("#### {}", SecurityContextHolder.getContext().getAuthentication().hashCode());
         log.info("#### {}", request.getSession().getAttribute("SPRING_SECURITY_CONTEXT").hashCode());
         // security context holder의 해시코드, 요청마다 새롭게 생성됨.
         log.info("#### {}", contextHolder.hashCode());
-        log.info("#### {}", contextHolder);
+        log.info("#### {}", contextHolder);*/
 
         return ResponseEntity.ok("Admin Authentication success!");
     }
